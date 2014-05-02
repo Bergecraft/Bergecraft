@@ -25,6 +25,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -331,7 +333,17 @@ public class Bergecraft extends JavaPlugin implements Listener  {
 			player.setMaxHealth(maxHealth);
  	    }
 	}
-    
+    @Bergification(opt="ender_pearl_teleportation", def="false")
+      @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+      public void onTeleport(PlayerTeleportEvent event) {
+        TeleportCause cause = event.getCause();
+        if (cause != TeleportCause.ENDER_PEARL) {
+          return;
+        } else if (!config_.get("ender_pearl_teleportation").getBool()) {
+          event.setCancelled(true);
+          return;
+        }
+    }
     public boolean onCommand(
         CommandSender sender,
         Command command,
